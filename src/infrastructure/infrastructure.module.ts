@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { AuthGuard } from './auth/auth.gaurd';
-import { UserModule } from 'src/v1/modules/user/user.module';
+import { UserModule } from 'src/v1/user/user.module';
 
 @Module({
   imports: [UserModule],

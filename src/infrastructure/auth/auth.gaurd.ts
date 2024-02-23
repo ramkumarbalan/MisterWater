@@ -10,7 +10,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import * as jwt from 'jsonwebtoken';
 import { formatErrorResponse } from '../response-formatter/response-formatter';
-import { UserService } from 'src/v1/modules/user/user.service';
+import { UserService } from 'src/v1/user/user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

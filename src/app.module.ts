@@ -7,10 +7,10 @@ import { HttpExceptionFilter } from './infrastructure/exception-filter/http-exce
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ValidateHeadersMiddleware } from './infrastructure/middleware/header.middleware';
-import { UserModule } from './v1/modules/user/user.module';
-import { AddressMasterModule } from './v1/modules/address_master/address_master.module';
-import { VendorModule } from './v1/modules/vendor/vendor.module';
-import { AddressModule } from './v1/modules/address/address.module';
+import { UserModule } from './v1/user/user.module';
+import { AddressMasterModule } from './v1/address_master/address_master.module';
+import { VendorModule } from './v1/vendor/vendor.module';
+import { AddressModule } from './v1/address/address.module';
 
 @Module({
   imports: [
