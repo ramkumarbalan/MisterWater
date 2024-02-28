@@ -1,17 +1,28 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { formatErrorResponse } from 'src/infrastructure/response-formatter/response-formatter';
+import { PhoneVerificationRepo } from 'src/repositories/phone_verification.repo';
 import { UserRepo } from 'src/repositories/user.repo';
-import { sign } from 'src/utility/util';
+import { generateRandomOTP, generateUuid, sign } from 'src/utility/util';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepo: UserRepo) {}
+  constructor(
+    private readonly userRepo: UserRepo,
+    private readonly verificationRepo: PhoneVerificationRepo
+  ) { }
 
   async create(payload: any) {
     try {
-      const user = await this.userRepo.create(payload);
-      const token = await sign(user);
-      return { user, token };
+      const verifyUUID = await this.verificationRepo.findUUID(payload.id);
+      if (verifyUUID) {
+        payload.mobile_number = verifyUUID.mobile_number
+        payload.mobile_code = verifyUUID.mobile_code
+        const user = await this.userRepo.create(payload);
+        const token = await sign({ _id: user.id, role: user.role });
+        return { user, token };
+      } else {
+        return formatErrorResponse({ message: 'Phone number is not verifed yet to create profile' }, HttpStatus.BAD_REQUEST);
+      }
     } catch (e) {
       return formatErrorResponse(e, e.status);
     }
@@ -25,38 +36,36 @@ export class UserService {
     }
   }
 
-  async requestOtp(body: any) {
+  async verifyPhone(body: any) {
     try {
-      const { mobile_code, mobile_number } = body;
-      const user = await this.userRepo.requestOtp(mobile_code, mobile_number);
-      if (user) {
-        const token = await sign(user);
-        return {
-          message:
-            'Your One-Time Password (OTP) has been dispatched to your mobile number',
-          token,
-        };
+      if (body.mobile_code && body.mobile_number) {
+        const isUserExists = await this.verificationRepo.findPhone(body.mobile_number);
+        if (!isUserExists) {
+          const uuid = await generateUuid()
+          body.code = generateRandomOTP();
+          body.uuid = uuid;
+          const createUser = await this.verificationRepo.createPhone(body);
+          return createUser;
+        }
+        return isUserExists;
       }
-      return formatErrorResponse(
-        { message: 'Invalid User' },
-        HttpStatus.BAD_REQUEST,
-      );
     } catch (e) {
       return formatErrorResponse(e, e.status);
     }
   }
-
-  async verifyPhone(id: string, body: any) {
+  async verifyOTP(body: any) {
     try {
-      const user = await this.userRepo.verifyPhone(id, body.code);
-      if (user) {
-        const token = await sign(user);
-        return { user, token };
+      const verified = await this.verificationRepo.verifyPhone(body.code, body.id);
+      if (verified) {
+        const user = await this.userRepo.findPhone(verified.mobile_number);
+        if (user != null) {
+          const token = await sign({ _id: user.id, role: user.role });
+          return { user, token, isProfile: true };
+        } else {
+          return { isProfile: false, uuid: verified.uuid };
+        }
       }
-      return formatErrorResponse(
-        { message: 'Invalid code' },
-        HttpStatus.BAD_REQUEST,
-      );
+      return formatErrorResponse({ message: 'Invalid code' }, HttpStatus.BAD_REQUEST);
     } catch (e) {
       return formatErrorResponse(e, e.status);
     }
@@ -67,6 +76,14 @@ export class UserService {
       const data = await this.userRepo.isPhoneVerified(user.id);
       if (data) return true;
       return false;
+    } catch (e) {
+      return formatErrorResponse(e, e.status);
+    }
+  }
+
+  async getProfile(id) {
+    try {
+      return await this.userRepo.findById(id);
     } catch (e) {
       return formatErrorResponse(e, e.status);
     }

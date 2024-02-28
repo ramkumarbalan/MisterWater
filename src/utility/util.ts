@@ -1,4 +1,5 @@
 import * as jwt from 'jsonwebtoken';
+import * as uuid from 'uuid';
 
 export const sign = (user) => {
   const { _id, role } = user;
@@ -24,4 +25,8 @@ export function generateRandomOTP(): number {
   const max = Math.pow(10, otpLength) - 1;
   const randomOTP = Math.floor(Math.random() * (max - min + 1)) + min;
   return randomOTP;
+}
+
+export function generateUuid(): string {
+  return uuid.v4();
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/infrastructure/auth/auth.gaurd';
 
@@ -6,19 +6,25 @@ import { AuthGuard } from 'src/infrastructure/auth/auth.gaurd';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Post('/otp')
+  async verifyPhone(@Body() body) {
+    return await this.userService.verifyPhone(body);
+  }
+
+  @Post('/verify/otp')
+  async verify(@Req() req) {
+    return await this.userService.verifyOTP(req.body);
+  }
+
   @Post('/create')
   async create(@Body() body) {
     return await this.userService.create(body);
   }
 
-  @Post('/request_otp')
-  async requestOtp(@Body() body) {
-    return await this.userService.requestOtp(body);
+  @Get('/profile')
+  @UseGuards(AuthGuard)
+  async profle(@Req() req) {
+    return await this.userService.getProfile(req.user.id);
   }
 
-  @Post('/verify')
-  @UseGuards(AuthGuard)
-  async verify(@Req() req) {
-    return await this.userService.verifyPhone(req.user.id, req.body);
-  }
 }

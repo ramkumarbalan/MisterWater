@@ -2,12 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/schema/user.schema';
+import { PhoneVerfication } from 'src/schema/verification.schema';
 import { generateRandomOTP } from 'src/utility/util';
 
 @Injectable()
 export class UserRepo {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    
   ) {}
 
   async create(payload: any) {
@@ -32,9 +34,9 @@ export class UserRepo {
     );
   }
 
-  async verifyPhone(id: string, code: number) {
+  async verifyPhone(code: number, uuid: string) {
     return await this.userModel.findOneAndUpdate(
-      { _id: id, 'validation.code': code },
+      { uuid: uuid, 'validation.code': code },
       { $set: { 'validation.isVerified': true } },
       { new: true },
     );
@@ -45,5 +47,11 @@ export class UserRepo {
       _id: id,
       'validation.isVerified': true,
     });
+  }
+
+  async findPhone(phone) {
+    return await this.userModel.findOne(
+      { mobile_number: phone}
+    );
   }
 }
