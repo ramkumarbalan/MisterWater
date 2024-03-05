@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import moment from 'moment';
 import { formatErrorResponse } from 'src/infrastructure/response-formatter/response-formatter';
-import { PhoneVerificationRepo } from 'src/repositories/phone_verification.repo';
+import { MobileStoreRepo } from 'src/repositories/mobile_store.repo';
 import { UserRepo } from 'src/repositories/user.repo';
 import { generateRandomOTP, generateUuid, sign } from 'src/utility/util';
 
@@ -8,12 +9,12 @@ import { generateRandomOTP, generateUuid, sign } from 'src/utility/util';
 export class UserService {
   constructor(
     private readonly userRepo: UserRepo,
-    private readonly verificationRepo: PhoneVerificationRepo
+    private readonly mobileStoreRepo: MobileStoreRepo
   ) { }
 
   async create(payload: any) {
     try {
-      const verifyUUID = await this.verificationRepo.findUUID(payload.id);
+      const verifyUUID = await this.mobileStoreRepo.findUUID(payload.id);
       if (verifyUUID) {
         payload.mobile_number = verifyUUID.mobile_number
         payload.mobile_code = verifyUUID.mobile_code
@@ -39,12 +40,12 @@ export class UserService {
   async verifyPhone(body: any) {
     try {
       if (body.mobile_code && body.mobile_number) {
-        const isUserExists = await this.verificationRepo.findPhone(body.mobile_number);
+        const isUserExists = await this.mobileStoreRepo.findPhone(body.mobile_number);
         if (!isUserExists) {
           const uuid = await generateUuid()
-          body.code = generateRandomOTP();
+          body.otp = generateRandomOTP();
           body.uuid = uuid;
-          const createUser = await this.verificationRepo.createPhone(body);
+          const createUser = await this.mobileStoreRepo.createPhone(body);
           return createUser;
         }
         return isUserExists;
@@ -55,7 +56,7 @@ export class UserService {
   }
   async verifyOTP(body: any) {
     try {
-      const verified = await this.verificationRepo.verifyPhone(body.code, body.id);
+      const verified = await this.mobileStoreRepo.verifyPhone(body.code, body.id);
       if (verified) {
         const user = await this.userRepo.findPhone(verified.mobile_number);
         if (user != null) {

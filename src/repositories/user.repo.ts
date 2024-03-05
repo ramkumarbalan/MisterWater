@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/schema/user.schema';
-import { PhoneVerfication } from 'src/schema/verification.schema';
 import { generateRandomOTP } from 'src/utility/util';
 
 @Injectable()
@@ -27,8 +26,7 @@ export class UserRepo {
       { mobile_code, mobile_number },
       {
         $set: {
-          'validation.code': generateRandomOTP(),
-          'validation.isVerified': false,
+          'validation.code': generateRandomOTP()
         },
       },
     );

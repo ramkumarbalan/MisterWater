@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AddressMasterController } from './address_master.controller';
+import { AddressMasterController } from './community_master.controller';
 
 describe('AddressMasterController', () => {
   let controller: AddressMasterController;

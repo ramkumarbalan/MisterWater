@@ -1,46 +1,52 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
 import { User } from './user.schema';
 import { generateRandomOTP } from 'src/utility/util';
-import { Address, addressSchema } from './address.schema';
+import { Types, Schema as mongooseSchema } from 'mongoose';
 
 @Schema({
   timestamps: true,
   toJSON: { virtuals: true, transform: schemaTransform },
+  strict: true
 })
 export class Vendor {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   user: User;
 
-  @Prop({ type: Number })
-  code: number;
+  @Prop({ type: String })
+  shop_name: string;
 
   @Prop({ type: String })
-  shopName: string;
+  shop_address: string;
+
+  @Prop({ type: Number })
+  shop_code: number;
 
   @Prop({ type: Boolean, default: false })
-  isApproved: boolean;
+  is_active: boolean;
 
   @Prop({ type: Boolean, default: false })
-  isActive: boolean;
+  is_deleted: boolean;
 
-  @Prop([{ type: addressSchema }])
-  addresses: Address[];
+  @Prop([{ type: [mongooseSchema.Types.Mixed] }])
+  addresses: [{
+    address: { type: Types.ObjectId, ref: 'CommunityMaster' },
+    is_deleted: { type: boolean, default: false }
+    is_active: boolean;
+  }];
 
-  @Prop()
-  users: [
-    {
-      isApproved: { type: boolean; defalut: false };
-      isActive: { type: boolean; defalut: false };
-      user: { type: Types.ObjectId; ref: 'User' };
-    },
-  ];
+  @Prop({ type: [mongooseSchema.Types.Mixed] })
+  serviceable_time: [{
+    start: string,
+    end: string,
+    is_deleted: { type: boolean, default: false }
+    is_active: boolean;
+  }];
 }
 
 export const vendorSchema = SchemaFactory.createForClass(Vendor);
 
 vendorSchema.pre('save', function (next) {
-  this.code = generateRandomOTP();
+  this.shop_code = generateRandomOTP();
   next();
 });
 

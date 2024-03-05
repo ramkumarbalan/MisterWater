@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Exclude } from 'class-transformer';
-import { generateRandomOTP } from 'src/utility/util';
+import moment from 'moment';
 
 @Schema({
     timestamps: true,
-    toJSON: { virtuals: true, transform: schemaTransform }
+    toJSON: { virtuals: true, transform: schemaTransform },
+    strict: true
 })
-export class PhoneVerfication {
+export class MobileStore {
     @Prop({ type: String, required: true })
     mobile_code: number;
 
@@ -14,19 +15,22 @@ export class PhoneVerfication {
     mobile_number: number;
 
     @Prop({ type: Boolean, required: true, default: false })
-    isVerified: boolean;
+    is_verified: boolean;
 
     @Prop({ type: Number, required: true })
     @Exclude()
-    code: number;
+    otp: number;
 
     @Prop({ type: String, required: true })
     uuid: string;
+
+    @Prop({ type: Date, default: Date.now, expires: '10m' }) // expires after 5 minutes
+    expires_at: Date;
 }
 
-export const phoneVerficationSchema = SchemaFactory.createForClass(PhoneVerfication);
+export const mobileStoreSchema = SchemaFactory.createForClass(MobileStore);
 
-phoneVerficationSchema.index({ mobile_code: 1, mobile_number: 1 }, { unique: true });
+mobileStoreSchema.index({ mobile_code: 1, mobile_number: 1 }, { unique: true });
 
 function schemaTransform(doc, ret) {
     delete ret.updatedAt;

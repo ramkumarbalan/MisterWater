@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CommunityMaster } from 'src/schema/community_master.schema';
 import { PaginationFilter } from 'src/utility/common/PaginationFilter';
-import { AddressMaster } from 'src/schema/address-master.schema';
 
 @Injectable()
-export class AddressMasterRepo {
+export class CommunityMasterRepo {
   constructor(
-    @InjectModel(AddressMaster.name)
-    private readonly addressMasterModel: Model<AddressMaster>,
+    @InjectModel(CommunityMaster.name)
+    private readonly communityMasterModel: Model<CommunityMaster>,
   ) {}
 
   async create(payload: any) {
-    return await new this.addressMasterModel(payload).save();
+    return await new this.communityMasterModel(payload).save();
   }
 
   async update(id: string, payload: any) {
-    return await this.addressMasterModel.findByIdAndUpdate(id, payload).exec();
+    return await this.communityMasterModel.findByIdAndUpdate(id, payload).exec();
   }
 
   async findAll(paginationFilter: PaginationFilter) {
@@ -28,7 +28,7 @@ export class AddressMasterRepo {
         $options: 'i',
       };
     }
-    return await this.addressMasterModel
+    return await this.communityMasterModel
       .aggregate([
         {
           $match: matchQuery,
@@ -54,6 +54,6 @@ export class AddressMasterRepo {
   }
 
   async findById(id) {
-    return await this.addressMasterModel.findById(id).exec();
+    return await this.communityMasterModel.findById(id).exec();
   }
 }

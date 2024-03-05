@@ -2,15 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { formatErrorResponse } from 'src/infrastructure/response-formatter/response-formatter';
 import { PaginationFilter } from 'src/utility/common/PaginationFilter';
 import { paginationHelper } from 'src/utility/util';
-import { AddressMasterRepo } from 'src/repositories/address_master.repo';
+import { CommunityMasterRepo } from 'src/repositories/community_master.repo';
 
 @Injectable()
-export class AddressMasterService {
-  constructor(private readonly addressMasterRepo: AddressMasterRepo) {}
+export class CommounityMasterService {
+  constructor(private readonly communityMasterRepo: CommunityMasterRepo) {}
 
   async create(payload: any) {
     try {
-      return await this.addressMasterRepo.create(payload);
+      return await this.communityMasterRepo.create(payload);
     } catch (e) {
       return formatErrorResponse(e, e.status);
     }
@@ -18,7 +18,7 @@ export class AddressMasterService {
 
   async update(id: string, payload: any) {
     try {
-      return await this.addressMasterRepo.update(id, payload);
+      return await this.communityMasterRepo.update(id, payload);
     } catch (e) {
       return formatErrorResponse(e, e.status);
     }
@@ -26,7 +26,7 @@ export class AddressMasterService {
 
   async findAll(paginationFilter: PaginationFilter) {
     try {
-      const response = await this.addressMasterRepo.findAll(paginationFilter);
+      const response = await this.communityMasterRepo.findAll(paginationFilter);
       response.total = paginationHelper(response.total);
       return response;
     } catch (e) {
@@ -36,7 +36,7 @@ export class AddressMasterService {
 
   async findById(id: string) {
     try {
-      return await this.addressMasterRepo.findById(id);
+      return await this.communityMasterRepo.findById(id);
     } catch (e) {
       return formatErrorResponse(e, e.status);
     }
