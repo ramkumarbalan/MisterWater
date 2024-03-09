@@ -8,15 +8,17 @@ import {
   SetMetadata,
   UseGuards,
 } from '@nestjs/common';
-import { CommounityMasterService } from './community_master.service';
-import { PaginationFilter } from 'src/utility/common/PaginationFilter';
+import { CommunityMasterService } from './community_master.service';
+import { PaginationFilter } from 'src/shared/PaginationFilter';
 import { AuthGuard } from 'src/infrastructure/auth/auth.gaurd';
 
-@Controller('address-master')
+@Controller('v1/community_master')
 export class CommunityMasterController {
-  constructor(private readonly commounityMasterService: CommounityMasterService) {}
+  constructor(
+    private readonly commounityMasterService: CommunityMasterService,
+  ) {}
 
-  @Post('/create')
+  @Post('')
   async create(@Body() body) {
     return await this.commounityMasterService.create(body);
   }
@@ -27,8 +29,8 @@ export class CommunityMasterController {
   }
 
   @Get('/all')
-  @UseGuards(AuthGuard)
-  @SetMetadata('roles', ['admin', 'vendor', 'customer'])
+  // @UseGuards(AuthGuard)
+  // @SetMetadata('roles', ['admin', 'vendor', 'customer'])
   async findAll(@Query() paginationFilter: PaginationFilter) {
     return await this.commounityMasterService.findAll(paginationFilter);
   }

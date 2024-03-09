@@ -4,7 +4,7 @@ import { Types, Schema as mongooseSchema } from 'mongoose';
 @Schema({
   timestamps: true,
   toJSON: { virtuals: true, transform: schemaTransform },
-  strict: true
+  strict: true,
 })
 export class User {
   @Prop({ type: String, required: true })
@@ -24,23 +24,25 @@ export class User {
   })
   role: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String, required: false })
   email: string;
 
-  @Prop([{ type: [mongooseSchema.Types.Mixed] }])
-  addresses: [{
-    address: { type: Types.ObjectId, ref: 'CommunityMaster' },
-    building_name: string,
-    type: { type: string, default: 'home' }
-    door_no: string,
-    is_deleted: { type: boolean, default: false }
-  }];
+  @Prop({ type: mongooseSchema.Types.Mixed, required: true })
+  addresses: [
+    {
+      address: { type: Types.ObjectId; ref: 'CommunityMaster'; required: true };
+      building_name: { type: string; required: true };
+      type: { type: string; default: 'home'; required: true };
+      door_no: { type: string; required: true };
+      is_deleted: { type: boolean; default: false };
+    },
+  ];
 
   @Prop({ type: Boolean, default: true })
   is_active: boolean;
 
   @Prop({ type: Boolean, default: false })
-  is_delete: boolean;
+  is_deleted: boolean;
 }
 
 export const userSchema = SchemaFactory.createForClass(User);
@@ -51,8 +53,8 @@ function schemaTransform(doc, ret) {
   delete ret.updatedAt;
   delete ret.createdAt;
   delete ret.__v;
-  delete ret._id;
   delete ret.role;
   delete ret.is_active;
+  delete ret.is_deleted;
   return ret;
 }

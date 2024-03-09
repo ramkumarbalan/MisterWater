@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CommunityMaster } from 'src/schema/community_master.schema';
-import { PaginationFilter } from 'src/utility/common/PaginationFilter';
+import { PaginationFilter } from 'src/shared/PaginationFilter';
 
 @Injectable()
 export class CommunityMasterRepo {
@@ -16,7 +16,9 @@ export class CommunityMasterRepo {
   }
 
   async update(id: string, payload: any) {
-    return await this.communityMasterModel.findByIdAndUpdate(id, payload).exec();
+    return await this.communityMasterModel
+      .findByIdAndUpdate(id, payload)
+      .exec();
   }
 
   async findAll(paginationFilter: PaginationFilter) {

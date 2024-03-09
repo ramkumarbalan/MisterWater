@@ -1,11 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Schema as mongooseSchema} from 'mongoose';
-
+import { Schema as mongooseSchema } from 'mongoose';
 
 @Schema({
   timestamps: true,
   toJSON: { virtuals: true, transform: schemaTransform },
-  strict: true
+  strict: true,
 })
 export class CommunityMaster {
   @Prop({ type: String, required: true })
@@ -17,10 +16,10 @@ export class CommunityMaster {
   @Prop({ type: String, required: false })
   addressLine2: string;
 
-  @Prop({ type: mongooseSchema.Types.Mixed, required: false })
+  @Prop({ type: mongooseSchema.Types.Mixed, required: true })
   location: {
-    type: string,
-    coordinates: []
+    type: string;
+    coordinates: [];
   };
 
   @Prop({ type: String, required: true })
@@ -42,7 +41,8 @@ export class CommunityMaster {
   is_delete: boolean;
 }
 
-export const communityMasterSchema = SchemaFactory.createForClass(CommunityMaster);
+export const communityMasterSchema =
+  SchemaFactory.createForClass(CommunityMaster);
 
 communityMasterSchema.index(
   { communityName: 1, city: 1, state: 1, pincode: 1 },
@@ -51,6 +51,5 @@ communityMasterSchema.index(
 
 function schemaTransform(doc, ret) {
   delete ret.__v;
-  delete ret._id;
   return ret;
 }

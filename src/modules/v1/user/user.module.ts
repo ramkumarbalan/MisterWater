@@ -6,13 +6,17 @@ import { User, userSchema } from 'src/schema/user.schema';
 import { UserRepo } from 'src/repositories/user.repo';
 import { MobileStoreRepo } from 'src/repositories/mobile_store.repo';
 import { MobileStore, mobileStoreSchema } from 'src/schema/mobile_store.schema';
-
+import { CommunityMasterModule } from '../community_master/community_master.module';
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: User.name, schema: userSchema }, { name: MobileStore.name, schema: mobileStoreSchema }]),
+    CommunityMasterModule,
+    MongooseModule.forFeature([
+      { name: User.name, schema: userSchema },
+      { name: MobileStore.name, schema: mobileStoreSchema },
+    ]),
   ],
   controllers: [UserController],
   providers: [UserService, UserRepo, MobileStoreRepo],
   exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}

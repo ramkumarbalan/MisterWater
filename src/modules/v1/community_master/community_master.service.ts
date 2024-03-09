@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { formatErrorResponse } from 'src/infrastructure/response-formatter/response-formatter';
-import { PaginationFilter } from 'src/utility/common/PaginationFilter';
-import { paginationHelper } from 'src/utility/util';
+import { PaginationFilter } from 'src/shared/PaginationFilter';
+import { paginationHelper } from 'src/shared/util';
 import { CommunityMasterRepo } from 'src/repositories/community_master.repo';
 
 @Injectable()
-export class CommounityMasterService {
+export class CommunityMasterService {
   constructor(private readonly communityMasterRepo: CommunityMasterRepo) {}
 
   async create(payload: any) {

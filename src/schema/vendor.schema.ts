@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { User } from './user.schema';
-import { generateRandomOTP } from 'src/utility/util';
+import { generateRandomOTP } from 'src/shared/util';
 import { Types, Schema as mongooseSchema } from 'mongoose';
 
 @Schema({
@@ -52,7 +52,6 @@ vendorSchema.pre('save', function (next) {
 
 function schemaTransform(doc, ret) {
   delete ret.__v;
-  delete ret._id;
   delete ret.isActive;
   delete ret.isApproved;
   return ret;

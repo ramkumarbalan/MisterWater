@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/schema/user.schema';
-import { generateRandomOTP } from 'src/utility/util';
+import { generateRandomOTP } from 'src/shared/util';
 
 @Injectable()
 export class UserRepo {

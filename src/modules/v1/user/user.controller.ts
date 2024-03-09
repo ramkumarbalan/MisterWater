@@ -6,17 +6,17 @@ import { AuthGuard } from 'src/infrastructure/auth/auth.gaurd';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/otp')
+  @Post('/request_otp')
   async verifyPhone(@Body() body) {
-    return await this.userService.verifyPhone(body);
+    return await this.userService.requestOtp(body);
   }
 
-  @Post('/verify/otp')
+  @Post('/verify_otp')
   async verify(@Req() req) {
     return await this.userService.verifyOTP(req.body);
   }
 
-  @Post('/create')
+  @Post('/')
   async create(@Body() body) {
     return await this.userService.create(body);
   }
